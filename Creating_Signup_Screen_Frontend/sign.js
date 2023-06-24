@@ -19,24 +19,22 @@ function newUserLogin(e) {
       Email,
       Password,
     };
+    console.log(signupUser);
+    axios
+      .post("http://localhost:3000/signPage/user-add", signupUser)
+      .then((response) => {
+        userOnScreen(response.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      });
 
     // create new feild
     name.value = "";
     email.value = "";
     password.value = "";
-
-
-    axios
-      .post("http://localhost:3000/signPage",signupUser)
-      .then((response) => {
-        userOnScreen(response.data)
-      })
-      .catch((error) => {
-        console.log(error);
-      });
   }
 }
 
-function userOnScreen(signupUser) {
-    
-}
+function userOnScreen(signupUser) {}
+
