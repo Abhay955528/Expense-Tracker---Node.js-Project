@@ -12,7 +12,7 @@ const sign = sequelize.define('signUp',{
         type:Sequelize.STRING,
         unique:true
     },
-    password:Sequelize.INTEGER
+    password:Sequelize.STRING
     
 })
 

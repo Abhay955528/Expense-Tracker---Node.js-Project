@@ -7,14 +7,14 @@ myForm.addEventListener("submit", newUserLogin);
 
 async function newUserLogin(e) {
   e.preventDefault();
-    const Name = name.value;
-    const Email = email.value;
-    const Password = password.value;
+    const name = name.value;
+    const email = email.value;
+    const password = password.value;
 
     const signupUser = {
-      Name,
-      Email,
-      Password,
+      name,
+      email,
+      password,
     };
     console.log(signupUser);
     await axios

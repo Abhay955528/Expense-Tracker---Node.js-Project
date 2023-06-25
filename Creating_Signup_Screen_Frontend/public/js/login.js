@@ -18,9 +18,9 @@ async function newLogin(e) {
     .then((response) => {
       alert(response.data.message);
     })
-    .catch((error) => {
-      console.log(JSON.stringify(error));
-      document.body.innerHTML += `<div style="color:red:">${error.message}`;
+    .catch((err) => {
+      console.log(JSON.stringify(err))
+      document.body.innerHTML += `<div style="color:red;">${err.message}`;
     });
 
   LoginEmail.value = "";

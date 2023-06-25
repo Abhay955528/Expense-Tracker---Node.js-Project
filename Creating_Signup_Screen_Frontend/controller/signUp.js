@@ -1,14 +1,32 @@
 const sign = require("../model/signUp");
+const bcrypt = require("bcrypt");
+
+function isstringinvalid(string) {
+  if (string == undefined || string === 0) {
+    return true;
+  } else {
+    return false;
+  }
+}
 
 const Addsign = async (req, res, next) => {
   try {
     const { Name, Email, Password } = req.body;
-    const uId = await sign.create({
-      name: Name,
-      email: Email,
-      password: Password,
+    if (
+      isstringinvalid(name) ||
+      isstringinvalid(email) ||
+      isstringinvalid(password)
+    ) {
+      return res
+        .status(400)
+        .json({ err: "Bad Parameters . Something is missing" });
+    }
+    let solt =10;
+    const uId = bcrypt.hash(password, solt, async (err, hash) => {
+      await sign.create({
+       name,email,password:hash});
+      res.status(201).json({ message: "Successfuly create new user" });
     });
-    res.status(200).json({ newSignUp: uId });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error: error });

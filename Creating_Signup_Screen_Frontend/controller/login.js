@@ -1,5 +1,6 @@
 const sign = require("../model/signUp");
 
+
 const logindata = async (req, res, next) => {
   const { email, password } = req.body;
   console.log(password);
@@ -7,20 +8,16 @@ const logindata = async (req, res, next) => {
     .findAll({ where: { email } })
     .then((response) => {
       if (response.length > 0) {
-          if (response[0].password === password) {
-            console.log(response[0].password );
+        if (response[0].password === password) {
           res
-            .status(200)
-            .json({ success: true, message: "User logged in successfully" });
+            .status(200).json({ success: true, message: "User logged in successfully" });
         } else {
           return res
-            .status(400)
-            .json({ success: false, message: "Password is incorrect" });
+            .status(400).json({ success: false, message: "Password is incorrect" });
         }
       } else {
         return res
-          .status(400)
-          .json({ success: false, message: "User Doesnot exitst" });
+          .status(400).json({ success: false, message: "User Doesnot exitst" });
       }
     })
     .catch((error) => {
