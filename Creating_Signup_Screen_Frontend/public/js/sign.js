@@ -7,9 +7,6 @@ myForm.addEventListener("submit", newUserLogin);
 
 function newUserLogin(e) {
   e.preventDefault();
-  if (name.value === "" || email.value === "" || password === "") {
-    alert(required);
-  } else {
     const Name = name.value;
     const Email = email.value;
     const Password = password.value;
@@ -23,7 +20,6 @@ function newUserLogin(e) {
     axios
       .post("http://localhost:3000/signPage/user-add", signupUser)
       .then((response) => {
-        userOnScreen(response.data);
       })
       .catch((error) => {
         console.log(error);
@@ -34,7 +30,4 @@ function newUserLogin(e) {
     email.value = "";
     password.value = "";
   }
-}
-
-function userOnScreen(signupUser) {}
 
