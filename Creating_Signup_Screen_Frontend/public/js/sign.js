@@ -5,7 +5,7 @@ const password = document.getElementById("user-pass");
 
 myForm.addEventListener("submit", newUserLogin);
 
-function newUserLogin(e) {
+async function newUserLogin(e) {
   e.preventDefault();
     const Name = name.value;
     const Email = email.value;
@@ -17,7 +17,7 @@ function newUserLogin(e) {
       Password,
     };
     console.log(signupUser);
-    axios
+    await axios
       .post("http://localhost:3000/signPage/user-add", signupUser)
       .then((response) => {
       })
