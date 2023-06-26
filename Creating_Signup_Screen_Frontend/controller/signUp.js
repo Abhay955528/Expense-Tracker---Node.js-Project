@@ -11,7 +11,7 @@ function isstringinvalid(string) {
 
 const Addsign = async (req, res, next) => {
   try {
-    const { Name, Email, Password } = req.body;
+    const { name, email, password } = req.body;
     if (
       isstringinvalid(name) ||
       isstringinvalid(email) ||
@@ -21,10 +21,14 @@ const Addsign = async (req, res, next) => {
         .status(400)
         .json({ err: "Bad Parameters . Something is missing" });
     }
-    let solt =10;
+    let solt = 10;
     const uId = bcrypt.hash(password, solt, async (err, hash) => {
+      console.log(hash);
       await sign.create({
-       name,email,password:hash});
+        name,
+        email,
+        password: hash,
+      });
       res.status(201).json({ message: "Successfuly create new user" });
     });
   } catch (error) {

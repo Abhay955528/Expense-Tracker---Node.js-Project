@@ -1,15 +1,15 @@
 const myForm = document.getElementById("my-form");
-const name = document.getElementById("user-name");
-const email = document.getElementById("user-email");
-const password = document.getElementById("user-pass");
+let Name = document.getElementById("user-name");
+let Email = document.getElementById("user-email");
+let Password = document.getElementById("user-pass");
 
 myForm.addEventListener("submit", newUserLogin);
 
 async function newUserLogin(e) {
   e.preventDefault();
-    const name = name.value;
-    const email = email.value;
-    const password = password.value;
+    let name = Name.value;
+    let email = Email.value;
+    let password = Password.value;
 
     const signupUser = {
       name,
@@ -26,8 +26,8 @@ async function newUserLogin(e) {
       });
 
     // create new feild
-    name.value = "";
-    email.value = "";
-    password.value = "";
+    Name.value = "";
+    Email.value = "";
+    Password.value = "";
   }
 
