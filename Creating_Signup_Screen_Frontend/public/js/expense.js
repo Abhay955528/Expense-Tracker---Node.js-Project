@@ -1,53 +1,46 @@
-let form = document.getElementById("my-form");
-let spendMoney = document.getElementById("Amount");
-let spendOn = document.getElementById("kis-chiz-pe");
-let spendWhat = document.getElementById("kahaPe");
+const form = document.getElementById("my-form");
+const spendMoney = document.getElementById("Amount");
+const spendOn = document.getElementById("kis-chiz-pe");
+const spendWhat = document.getElementById("kahaPe");
 
 form.addEventListener("submit", AddNewSpend);
 
 function AddNewSpend(e) {
   e.preventDefault();
-  if (
-    spendMoney.value === "" ||
-    spendOn.value === "" ||
-    spendWhat.value === ""
-  ) {
-    alert("Fill the deatils");
-  } else {
-    let Fmoney = spendMoney.value;
-    let Fdescription = spendOn.value;
-    let Fcategory = spendWhat.value;
+  const money = spendMoney.value;
+  const description = spendOn.value;
+  const category = spendWhat.value;
 
-    let user = {
-      Fmoney,
-      Fdescription,
-      Fcategory,
-    };
-    console.log(user);
-    axios
-      .post("http://localhost:3000/expense/add-expense", user)
-      .then((response) => {
-        console.log(response);
-        showUsersOnScreen(response.data.newExpense);
-      })
-      .catch((error) => {
-        document.body.innerHTML =
-          document.body.innerHTML + "<h4>Something went wrong</h4>";
-        console.log(error);
-      });
+  const user = {
+    money,
+    description,
+    category,
+    // userId:1
+  };
+  console.log(user);
+  axios
+    .post("http://localhost:3000/expense/add-expense", user)
+    .then((response) => {
+      console.log(response);
+      showUsersOnScreen(response.data.newExpense);
+    })
+    .catch((error) => {
+      document.body.innerHTML =
+        document.body.innerHTML + "<h4>Something went wrong</h4>";
+      console.log(error);
+    });
 
-    spendMoney.value = "";
-    spendOn.value = "";
-    spendWhat.value = "";
-  }
+  spendMoney.value = "";
+  spendOn.value = "";
+  spendWhat.value = "";
 }
 function showUsersOnScreen(myObj) {
-  let parent = document.getElementById("user");
-  let child = document.createElement("li");
+  const parent = document.getElementById("user");
+  const child = document.createElement("li");
 
   child.appendChild(
     document.createTextNode(
-      `${myObj.amount} : ${myObj.descripiton} : ${myObj.category}`
+      `${myObj.amount} : ${myObj.description} : ${myObj.category}`
     )
   );
 
@@ -87,7 +80,7 @@ function showUsersOnScreen(myObj) {
       .delete(`http://localhost:3000/expense/delete-expense/${myObj.id}`)
       .then((response) => {
         spendMoney.value = myObj.amount;
-        spendOn.value = myObj.descripiton;
+        spendOn.value = myObj.description;
         spendWhat.value = myObj.category;
       })
       .catch((error) => {
@@ -105,12 +98,14 @@ function showUsersOnScreen(myObj) {
 
 window.addEventListener("DOMContentLoaded", onPageLoading);
 function onPageLoading(e) {
+  const token = localStorage.getItem("token");
   axios
-  .get(`http://localhost:3000/expense/get-expense`)
-  .then((response) => {
-    for (let i = 0; i < response.data.allExpense.length; i++) {
+    .get(`http://localhost:3000/expense/get-expense`
+    , { headers: { "Authorization": token }})
+    .then((response) => {
       console.log(response);
-      showUsersOnScreen(response.data.allExpense[i]);
-    }
-  });
+      for (let i = 0; i < response.data.allExpense.length; i++) {
+        showUsersOnScreen(response.data.allExpense[i]);
+      }
+    })
 }

@@ -1,6 +1,6 @@
 const Sequelize = require('sequelize');
 const sequelize = require('../util/database');
-const sign = sequelize.define('signUp',{
+const User = sequelize.define('user',{
     id:{
         type:Sequelize.INTEGER,
         allowNull:false,
@@ -16,4 +16,4 @@ const sign = sequelize.define('signUp',{
     
 })
 
-module.exports = sign;
+module.exports = User;

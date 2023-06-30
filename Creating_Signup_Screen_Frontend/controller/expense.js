@@ -1,47 +1,55 @@
 const Expense = require("../model/expense");
+const User = require('../model/user');
 
-const addExpense = async (req, res, enxt) => {
-    try {
-      const Amount = req.body.Fmoney;
-      const Descripition = req.body.Fdescription;
-      const Category = req.body.Fcategory;
-  
-      const uId = await Expense.create({
-        amount: Amount,
-        descripiton: Descripition,
-        category: Category,
-      });
-      res.status(201).json({ newExpense: uId });
-    } catch (err) {
-      res.status(200).json({
-        error: err,
-      });
+
+const addExpense = async (req, res) => {
+  try {
+    let uId =0;
+    const { money, description, category } = req.body;
+    const user = await User.findAll()
+    if (user.length > 0) {
+      uId = user[0].id
     }
-  };
-  
-  const getExpense = async (req, res, next) => {
-    try {
-      console.log(Expense);
-      const data = await Expense.findAll();
-      res.status(200).json({ allExpense: data });
-    } catch (error) {
-      console.log((error));
-      res.status(500).json({ error: error });
-    }
-  };
-  
-  const deleteExpense = async (req, res, next) => {
-    try {
-      const uId = req.params.id;
-      await Expense.destroy({ where: { id: uId } });
-      res.sendStatus(200).json;
-    } catch (error) {
-      console.log(error);
-      res.status(500).json(error);
-    }
-  };
-  
+
+    const eId = await Expense.create({
+      amount: money,
+      description: description,
+      category: category,
+      userId:uId
+    });
+    // console.log('EXPENSE:id>>>>',eId.id);
+    res.status(201).json({ newExpense: eId });
+  } catch (err) {
+    res.status(200).json({
+      error: err,
+    });
+  }
+};
+
+const getExpense = async (req, res) => {
+  try {
+    const uId = await Expense.findAll({where:{userId:req.user.id}});
+    res.status(200).json({ allExpense: uId });
+
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error });
+  }
+};
+
+const deleteExpense = async (req, res) => {
+  try {
+    const uId = req.params.id;
+    await Expense.destroy({ where: { id: uId } });
+    res.sendStatus(200).json;
+  } catch (error) {
+    console.log(error);
+    res.status(500).json(error);
+  }
+};
 
 module.exports = {
-  addExpense,getExpense,deleteExpense
+  addExpense,
+  getExpense,
+  deleteExpense,
 };

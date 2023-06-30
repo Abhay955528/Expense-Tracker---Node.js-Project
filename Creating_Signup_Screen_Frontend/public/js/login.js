@@ -17,9 +17,11 @@ async function newLogin(e) {
     .post("http://localhost:3000/login/user", newLoginUser)
     .then((response) => {
       alert(response.data.message);
+      localStorage.setItem('token', response.data.token);
+      window.location.href = "../views/expense.html";
     })
     .catch((err) => {
-      console.log(JSON.stringify(err))
+      console.log(JSON.stringify(err));
       document.body.innerHTML += `<div style="color:red;">${err.message}`;
     });
 
