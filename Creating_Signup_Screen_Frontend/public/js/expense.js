@@ -15,11 +15,12 @@ function AddNewSpend(e) {
     money,
     description,
     category,
-    // userId:1
   };
-  console.log(user);
+  const token = localStorage.getItem("token");
   axios
-    .post("http://localhost:3000/expense/add-expense", user)
+    .post("http://localhost:3000/expense/add-expense", user, {
+      headers: { Authorization: token },
+    })
     .then((response) => {
       console.log(response);
       showUsersOnScreen(response.data.newExpense);
@@ -34,6 +35,7 @@ function AddNewSpend(e) {
   spendOn.value = "";
   spendWhat.value = "";
 }
+
 function showUsersOnScreen(myObj) {
   const parent = document.getElementById("user");
   const child = document.createElement("li");
@@ -97,15 +99,52 @@ function showUsersOnScreen(myObj) {
 }
 
 window.addEventListener("DOMContentLoaded", onPageLoading);
+
 function onPageLoading(e) {
   const token = localStorage.getItem("token");
   axios
-    .get(`http://localhost:3000/expense/get-expense`
-    , { headers: { "Authorization": token }})
+    .get(`http://localhost:3000/expense/get-expense`, {
+      headers: { Authorization: token },
+    })
     .then((response) => {
       console.log(response);
       for (let i = 0; i < response.data.allExpense.length; i++) {
         showUsersOnScreen(response.data.allExpense[i]);
       }
-    })
+    });
 }
+
+document.getElementById("rzp-button").onclick = async function (e) {
+  const token = localStorage.getItem("token");
+  console.log(token);
+  const response = await axios.get(
+    "http://localhost:3000/purchase/premiummembership",
+    {
+      headers: { Authorization: token },
+    }
+  );
+  console.log(response);
+
+  let opations = {
+    Key: response.data.Key_id, //Enter the key ID generated from the Dashboard
+    order_id: response.data.order.id, // For one time payment
+    //This handle fucntion will handle the success payment
+    handler: async function (result) {
+      await axios
+        .post("http://localhost:3000/purchase/updatetransactionstatus", {
+          order_id: opations.order_id,
+          payment_id: result.razorpay_payment_id,
+          headers: { Authorization: token },
+        })
+        alert("You are a Preminum User Now")
+    },
+  };
+
+  const rzp1 = Razorpay(opations);
+  rzp1.open();
+  e.preventDefault();
+  rzp1.on("payment failed", function (response) {
+    console.log(response);
+    alert("Something went wrong");
+  });
+};

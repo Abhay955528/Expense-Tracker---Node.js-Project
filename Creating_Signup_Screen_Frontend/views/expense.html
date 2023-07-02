@@ -1,46 +1,50 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <meta user="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta user="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Expense Tracker</title>
     <style>
-        .container{
-            text-align: center;
-        }
-        li{
-            list-style-type: none;
-        }
+      h1 {
+        text-align: center;
+      }
+      #user {
+        text-align: center;
+      }
+      li {
+        list-style-type: none;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <div class="container">
-        <h1>How Are You Spend Your Summer Vaction .. ?</h1>
-    
-        <form id="my-form">
-            
+      <h1>How Are You Spend Your Summer Vaction .. ?</h1>
+
+      <form id="my-form">
         <label for="Amount">Choose ExpenseAmount :</label>
-        <input type="number" class="user" id="Amount" required>
-    
+        <input type="number" class="user" id="Amount" required />
+
         <label for="kis-chiz-pe">Choose Description :</label>
-        <input type="text" class="user" id="kis-chiz-pe" required>
-    
+        <input type="text" class="user" id="kis-chiz-pe" required />
+
         <label for="kahaPe">Choose a category :</label>
         <select id="kahaPe" required>
-            <option value="fuel">Fuel</option>
-            <option value="electronic">Electronic</option>
-            <option value="food">Food</option>
-            <option value="movie">Movie</option>
-            <option value="movie">On vacantion</option>
-          </select>
-       
-        <input type="submit" class="btn" value="Submit">
-    
-        </form>
-        <ul id="user"></ul>
+          <option value="fuel">Fuel</option>
+          <option value="electronic">Electronic</option>
+          <option value="food">Food</option>
+          <option value="movie">Movie</option>
+          <option value="movie">On vacantion</option>
+        </select>
+
+        <input type="submit" class="btn" value="Submit" />
+      </form>
+      
+      <button id="rzp-button">Buy Premium</button>
+      <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+      <ul id="user"></ul>
     </div>
     <script src="../public/js/expense.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
-</body>
+  </body>
 </html>

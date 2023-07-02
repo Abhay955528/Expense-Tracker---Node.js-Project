@@ -10,7 +10,6 @@ async function newUserLogin(e) {
   const name = Name.value;
   const email = Email.value;
   const password = Password.value;
-  console.log(password);
 
   const signupUser = {
     name,
@@ -18,11 +17,10 @@ async function newUserLogin(e) {
     password,
     
   };
-  console.log(signupUser);
   await axios
     .post("http://localhost:3000/signPage/user-add", signupUser)
     .then((response) => {
-      console.log(response.data.message);
+      console.log(response);
       window.location = "../views/login.html"
     })
     .catch((error) => {
