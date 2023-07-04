@@ -6,10 +6,11 @@ const bodyParser = require("body-parser");
 const sequelize = require("./util/database");
 
 //**  routes
-const userRoutes = require("./routes/user");
+const signRoutes = require("./routes/user");
 const loginRoutes = require("./routes/login");
 const expenseRoutes = require('./routes/expense');
 const purchaesRoutes = require('./routes/purchase');
+const preminumRoutes = require('./routes/premium');
 
 //**  model
 const User = require('./model/user');
@@ -20,10 +21,11 @@ const cors = require("cors");
 app.use(cors());
 
 app.use(bodyParser.json());
-app.use(userRoutes);
-app.use(loginRoutes);
-app.use(expenseRoutes);
-app.use(purchaesRoutes); 
+app.use(signRoutes);
+app.use('/login',loginRoutes);
+app.use('/expense',expenseRoutes);
+app.use('/purchase/',purchaesRoutes); 
+app.use('/premium',preminumRoutes);
 
 User.hasMany(Expense);
 Expense.belongsTo(User);
@@ -32,7 +34,8 @@ User.hasMany(Order);
 Order.belongsTo(User);
 
 sequelize
-  .sync(5555)
+  // .sync({force:true})
+  .sync()
   .then((result) => {
     // console.log(result);
     app.listen(3000);

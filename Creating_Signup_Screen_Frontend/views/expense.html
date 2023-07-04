@@ -6,20 +6,20 @@
     <meta user="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Expense Tracker</title>
     <style>
-      h1 {
+      #h1 {
         text-align: center;
       }
-      #user {
-        text-align: center;
+      #user{
+        list-style: none
       }
-      li {
-        list-style-type: none;
+      #leaderboard{
+        display: contents;
       }
     </style>
   </head>
   <body>
     <div class="container">
-      <h1>How Are You Spend Your Summer Vaction .. ?</h1>
+      <h1 id="h1">How Are You Spend Your Summer Vaction .. ?</h1>
 
       <form id="my-form">
         <label for="Amount">Choose ExpenseAmount :</label>
@@ -39,11 +39,14 @@
 
         <input type="submit" class="btn" value="Submit" />
       </form>
-      
+      <span id="message"></span>
+    <h1 id="expense"></h1>
+    <ul id="user"></ul>
       <button id="rzp-button">Buy Premium</button>
       <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
-      <ul id="user"></ul>
     </div>
+
+    <ul id="leaderboard"></ul>
     <script src="../public/js/expense.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
   </body>

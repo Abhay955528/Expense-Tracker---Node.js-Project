@@ -42,7 +42,7 @@ function showUsersOnScreen(myObj) {
 
   child.appendChild(
     document.createTextNode(
-      `${myObj.amount} : ${myObj.description} : ${myObj.category}`
+      `${myObj.amount} -  ${myObj.description} - ${myObj.category}`
     )
   );
 
@@ -53,47 +53,47 @@ function showUsersOnScreen(myObj) {
   deletebtn.type = "button";
 
   deletebtn.onclick = (e) => {
-    // if (confirm("Are You Sure ..?")) {
-    console.log(myObj.id);
-    var li = e.target.parentElement;
-    axios
-      .delete(`http://localhost:3000/expense/delete-expense/${myObj.id}`)
-      .then((response) => {
-        console.log(response.data);
-        parent.removeChild(child);
-      })
-      .catch((error) => {
-        document.body.innerHTML =
-          document.body.innerHTML + "<h4>Something went wrong</h4>";
-        console.log(error);
-      });
-    // }
+    if (confirm("Are You Sure ..?")) {
+      console.log(myObj.id);
+      var li = e.target.parentElement;
+      axios
+        .delete(`http://localhost:3000/expense/delete-expense/${myObj.id}`)
+        .then((response) => {
+          console.log(response.data);
+          parent.removeChild(child);
+        })
+        .catch((error) => {
+          document.body.innerHTML =
+            document.body.innerHTML + "<h4>Something went wrong</h4>";
+          console.log(error);
+        });
+    }
   };
   child.appendChild(deletebtn);
 
   // create edit button
-  let editBtn = document.createElement("input");
-  editBtn.value = "Edit Expense";
-  editBtn.id = "btn";
-  editBtn.type = "button";
+  // let editBtn = document.createElement("input");
+  // editBtn.value = "Edit Expense";
+  // editBtn.id = "btn";
+  // editBtn.type = "button";
 
-  editBtn.onclick = (e) => {
-    axios
-      .delete(`http://localhost:3000/expense/delete-expense/${myObj.id}`)
-      .then((response) => {
-        spendMoney.value = myObj.amount;
-        spendOn.value = myObj.description;
-        spendWhat.value = myObj.category;
-      })
-      .catch((error) => {
-        document.body.innerHTML =
-          document.body.innerHTML + "<h4>Something went wrong</h4>";
-        console.log(error);
-      });
+  // editBtn.onclick = (e) => {
+  //   axios
+  //     .delete(`http://localhost:3000/expense/delete-expense/${myObj.id}`)
+  //     .then((response) => {
+  //       spendMoney.value = myObj.amount;
+  //       spendOn.value = myObj.description;
+  //       spendWhat.value = myObj.category;
+  //     })
+  //     .catch((error) => {
+  //       document.body.innerHTML =
+  //         document.body.innerHTML + "<h4>Something went wrong</h4>";
+  //       console.log(error);
+  //     });
 
-    parent.removeChild(child);
-  };
-  child.appendChild(editBtn);
+  //   parent.removeChild(child);
+  // };
+  // child.appendChild(editBtn);
 
   parent.appendChild(child);
 }
@@ -102,21 +102,48 @@ window.addEventListener("DOMContentLoaded", onPageLoading);
 
 function onPageLoading(e) {
   const token = localStorage.getItem("token");
+  const decodedToken = parseJwt(token);
+  console.log(decodedToken);
+  const ispremiumuser = decodedToken.ispremiumuser;
+  if (ispremiumuser) {
+    preminumUserShowMessage();
+    ShowLeaderboard();
+  }
   axios
     .get(`http://localhost:3000/expense/get-expense`, {
       headers: { Authorization: token },
     })
     .then((response) => {
-      console.log(response);
       for (let i = 0; i < response.data.allExpense.length; i++) {
         showUsersOnScreen(response.data.allExpense[i]);
       }
     });
 }
 
+function preminumUserShowMessage() {
+  document.getElementById("rzp-button").style.visibility = "hidden";
+  document.getElementById("message").innerHTML = "You are a premium user :";
+  document.getElementById("expense").innerHTML = "Expense";
+}
+
+function parseJwt(token) {
+  var base64Url = token.split(".")[1];
+  var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+  var jsonPayload = decodeURIComponent(
+    window
+      .atob(base64)
+      .split("")
+      .map(function (c) {
+        return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+      })
+      .join("")
+  );
+
+  return JSON.parse(jsonPayload);
+}
+
 document.getElementById("rzp-button").onclick = async function (e) {
   const token = localStorage.getItem("token");
-  console.log(token);
   const response = await axios.get(
     "http://localhost:3000/purchase/premiummembership",
     {
@@ -124,21 +151,28 @@ document.getElementById("rzp-button").onclick = async function (e) {
     }
   );
   console.log(response);
-
   let opations = {
+
     Key: response.data.Key_id, //Enter the key ID generated from the Dashboard
     order_id: response.data.order.id, // For one time payment
     //This handle fucntion will handle the success payment
     handler: async function (result) {
-      await axios
-        .post("http://localhost:3000/purchase/updatetransactionstatus", {
+      const res = await axios.post(
+        "http://localhost:3000/purchase/updatetransactionstatus",
+        {
           order_id: opations.order_id,
           payment_id: result.razorpay_payment_id,
-          headers: { Authorization: token },
-        })
-        alert("You are a Preminum User Now")
+        },
+        { headers: { Authorization: token } }
+      );
+      alert("You are a Preminum User Now");
+      preminumUserShowMessage();
+      localStorage.setItem("isadmin", true);
+      ShowLeaderboard();
+      localStorage.setItem('token',res.data.token);
     },
   };
+
 
   const rzp1 = Razorpay(opations);
   rzp1.open();
@@ -148,3 +182,28 @@ document.getElementById("rzp-button").onclick = async function (e) {
     alert("Something went wrong");
   });
 };
+
+function ShowLeaderboard() {
+  const showLeaderBoard = document.createElement("input");
+  showLeaderBoard.type = "button";
+  showLeaderBoard.value = "Show Leaderboard";
+
+
+  const token = localStorage.getItem("token");
+  showLeaderBoard.onclick = async () => {
+    const userLeaderBoardArray = await axios.get(
+      "http://localhost:3000/premium/showLeaderBoard",
+      { headers: { Authorization: token } }
+    );
+    console.log(userLeaderBoardArray.data);
+
+    const LeaderboardBtn = document.getElementById("leaderboard");
+    LeaderboardBtn.innerHTML += "<h1>Leader Board </h1>";
+
+    userLeaderBoardArray.data.forEach((userDetail) => {
+      LeaderboardBtn.innerHTML += `<li>Name - ${userDetail.name} - Total Expense ${userDetail.total_cost}`;
+    });
+  };
+
+  document.getElementById("message").appendChild(showLeaderBoard);
+}
