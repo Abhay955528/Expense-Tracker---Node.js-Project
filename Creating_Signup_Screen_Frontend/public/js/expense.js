@@ -53,7 +53,7 @@ function showUsersOnScreen(myObj) {
   deletebtn.type = "button";
 
   deletebtn.onclick = (e) => {
-    if (confirm("Are You Sure ..?")) {
+    // if (confirm("Are You Sure ..?")) {
       console.log(myObj.id);
       var li = e.target.parentElement;
       axios
@@ -67,7 +67,7 @@ function showUsersOnScreen(myObj) {
             document.body.innerHTML + "<h4>Something went wrong</h4>";
           console.log(error);
         });
-    }
+    // }
   };
   child.appendChild(deletebtn);
 

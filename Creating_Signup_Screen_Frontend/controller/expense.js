@@ -1,17 +1,25 @@
 const Expense = require("../model/expense");
+let x = 0;
 
 const addExpense = async (req, res) => {
   try {
     const { money, description, category } = req.body;
+    let Money = parseInt(money); 
+    console.log(Money);
     let uId = req.user.id;
 
+    x=x+Money;
+    console.log(x);
+    
     const eId = await Expense.create({
-      amount: money,
+      amount: Money,
       description: description,
       category: category,
       userId: uId,
     });
+
     // console.log('EXPENSE:id>>>>',eId.id);
+    req.user.update({totalExpense:x});
     res.status(201).json({ newExpense: eId });
   } catch (err) {
     res.status(200).json({
