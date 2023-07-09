@@ -21,7 +21,7 @@ const logindata = async (req, res) => {
           res.status(200).json({
             success: true,
             message: "User logged in successfully",
-            token: generateAccessToken(user[0].id,user[0].name,user[0].ispremiumuser),
+            token: generateAccessToken(user[0].id,user[0].name,user[0].ispremiumuser)||0,
           });
         } else {
           return res
