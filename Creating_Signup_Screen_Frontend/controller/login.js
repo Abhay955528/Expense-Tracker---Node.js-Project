@@ -9,7 +9,7 @@ function generateAccessToken(id,name,ispremiumuser) {
 const logindata = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log(password);
+    console.log(email);
     const user = await User.findAll({ where: { email } });
     if (user.length > 0) {
       console.log('USERID>>>',user[0].id);
@@ -17,7 +17,7 @@ const logindata = async (req, res) => {
         if (err) {
           throw new Error("Something went worng");
         }
-        if (result === true) {
+        else if(result === true) {
           res.status(200).json({
             success: true,
             message: "User logged in successfully",

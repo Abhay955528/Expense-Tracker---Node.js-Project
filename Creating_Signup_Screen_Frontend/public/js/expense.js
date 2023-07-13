@@ -5,39 +5,40 @@ const spendWhat = document.getElementById("kahaPe");
 
 form.addEventListener("submit", AddNewSpend);
 
-function AddNewSpend(e) {
-  e.preventDefault();
-  const money = spendMoney.value;
-  const description = spendOn.value;
-  const category = spendWhat.value;
+async function AddNewSpend(e) {
+  try {
+    e.preventDefault();
+    const money = spendMoney.value;
+    const description = spendOn.value;
+    const category = spendWhat.value;
 
-  const user = {
-    money,
-    description,
-    category,
-  };
-  const token = localStorage.getItem("token");
-  axios
-    .post("http://localhost:3000/expense/add-expense", user, {
-      headers: { Authorization: token },
-    })
-    .then((response) => {
-      console.log(response);
-      showUsersOnScreen(response.data.newExpense);
-    })
-    .catch((error) => {
-      document.body.innerHTML =
-        document.body.innerHTML + "<h4>Something went wrong</h4>";
-      console.log(error);
-    });
-
-  spendMoney.value = "";
-  spendOn.value = "";
-  spendWhat.value = "";
+    const user = {
+      money,
+      description,
+      category,
+    };
+    const token = localStorage.getItem("token");
+    const response = await axios.post(
+      "http://localhost:3000/expense/add-expense",
+      user,
+      {
+        headers: { Authorization: token },
+      }
+    );
+    console.log(response);
+    showUsersOnScreen(response.data.newExpense);
+    spendMoney.value = "";
+    spendOn.value = "";
+    spendWhat.value = "";
+  } catch (error) {
+    document.body.innerHTML =
+      document.body.innerHTML + "<h4>Something went wrong</h4>";
+  }
 }
 
 function showUsersOnScreen(myObj) {
-  const parent = document.getElementById("user");
+  try {
+    const parent = document.getElementById("user");
   const child = document.createElement("li");
 
   child.appendChild(
@@ -54,19 +55,19 @@ function showUsersOnScreen(myObj) {
 
   deletebtn.onclick = (e) => {
     // if (confirm("Are You Sure ..?")) {
-      console.log(myObj.id);
-      var li = e.target.parentElement;
-      axios
-        .delete(`http://localhost:3000/expense/delete-expense/${myObj.id}`)
-        .then((response) => {
-          console.log(response.data);
-          parent.removeChild(child);
-        })
-        .catch((error) => {
-          document.body.innerHTML =
-            document.body.innerHTML + "<h4>Something went wrong</h4>";
-          console.log(error);
-        });
+    console.log(myObj.id);
+    var li = e.target.parentElement;
+    axios
+      .delete(`http://localhost:3000/expense/delete-expense/${myObj.id}`)
+      .then((response) => {
+        console.log(response.data);
+        parent.removeChild(child);
+      })
+      .catch((error) => {
+        document.body.innerHTML =
+          document.body.innerHTML + "<h4>Something went wrong</h4>";
+        console.log(error);
+      });
     // }
   };
   child.appendChild(deletebtn);
@@ -96,28 +97,35 @@ function showUsersOnScreen(myObj) {
   // child.appendChild(editBtn);
 
   parent.appendChild(child);
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 window.addEventListener("DOMContentLoaded", onPageLoading);
 
-function onPageLoading(e) {
-  const token = localStorage.getItem("token");
-  const decodedToken = parseJwt(token);
-  console.log(decodedToken);
-  const ispremiumuser = decodedToken.ispremiumuser;
-  if (ispremiumuser) {
-    preminumUserShowMessage();
-    ShowLeaderboard();
-  }
-  axios
-    .get(`http://localhost:3000/expense/get-expense`, {
-      headers: { Authorization: token },
-    })
-    .then((response) => {
-      for (let i = 0; i < response.data.allExpense.length; i++) {
-        showUsersOnScreen(response.data.allExpense[i]);
+async function onPageLoading(e) {
+  try {
+    const token = localStorage.getItem("token");
+    const decodedToken = parseJwt(token);
+    console.log(decodedToken);
+    const ispremiumuser = decodedToken.ispremiumuser;
+    if (ispremiumuser) {
+      preminumUserShowMessage();
+      ShowLeaderboard();
+    }
+    const response = await axios.get(
+      `http://localhost:3000/expense/get-expense`,
+      {
+        headers: { Authorization: token },
       }
-    });
+    );
+    for (let i = 0; i < response.data.allExpense.length; i++) {
+      showUsersOnScreen(response.data.allExpense[i]);
+    }
+  } catch (error) {
+    console.log(error);
+  }
 }
 
 function preminumUserShowMessage() {
@@ -143,67 +151,72 @@ function parseJwt(token) {
 }
 
 document.getElementById("rzp-button").onclick = async function (e) {
-  const token = localStorage.getItem("token");
-  const response = await axios.get(
-    "http://localhost:3000/purchase/premiummembership",
-    {
-      headers: { Authorization: token },
-    }
-  );
-  console.log(response);
-  let opations = {
-
-    Key: response.data.Key_id, //Enter the key ID generated from the Dashboard
-    order_id: response.data.order.id, // For one time payment
-    //This handle fucntion will handle the success payment
-    handler: async function (result) {
-      const res = await axios.post(
-        "http://localhost:3000/purchase/updatetransactionstatus",
-        {
-          order_id: opations.order_id,
-          payment_id: result.razorpay_payment_id,
-        },
-        { headers: { Authorization: token } }
-      );
-      alert("You are a Preminum User Now");
-      preminumUserShowMessage();
-      localStorage.setItem("isadmin", true);
-      ShowLeaderboard();
-      localStorage.setItem('token',res.data.token);
-    },
-  };
-
-
-  const rzp1 = Razorpay(opations);
-  rzp1.open();
-  e.preventDefault();
-  rzp1.on("payment failed", function (response) {
+  try {
+    const token = localStorage.getItem("token");
+    const response = await axios.get(
+      "http://localhost:3000/purchase/premiummembership",
+      {
+        headers: { Authorization: token },
+      }
+    );
     console.log(response);
-    alert("Something went wrong");
-  });
+    let opations = {
+      Key: response.data.Key_id, //Enter the key ID generated from the Dashboard
+      order_id: response.data.order.id, // For one time payment
+      //This handle fucntion will handle the success payment
+      handler: async function (result) {
+        const res = await axios.post(
+          "http://localhost:3000/purchase/updatetransactionstatus",
+          {
+            order_id: opations.order_id,
+            payment_id: result.razorpay_payment_id,
+          },
+          { headers: { Authorization: token } }
+        );
+        alert("You are a Preminum User Now");
+        preminumUserShowMessage();
+        localStorage.setItem("isadmin", true);
+        ShowLeaderboard();
+        localStorage.setItem("token", res.data.token);
+      },
+    };
+
+    const rzp1 = Razorpay(opations);
+    rzp1.open();
+    e.preventDefault();
+    rzp1.on("payment failed", function (response) {
+      console.log(response);
+      alert("Something went wrong");
+    });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 function ShowLeaderboard() {
-  const showLeaderBoard = document.createElement("input");
-  showLeaderBoard.type = "button";
-  showLeaderBoard.value = "Show Leaderboard";
+  try {
+    const showLeaderBoard = document.createElement("input");
+    showLeaderBoard.type = "button";
+    showLeaderBoard.value = "Show Leaderboard";
 
+    const token = localStorage.getItem("token");
+    showLeaderBoard.onclick = async () => {
+      const userLeaderBoardArray = await axios.get(
+        "http://localhost:3000/premium/showLeaderBoard",
+        { headers: { Authorization: token } }
+      );
+      console.log(userLeaderBoardArray.data);
 
-  const token = localStorage.getItem("token");
-  showLeaderBoard.onclick = async () => {
-    const userLeaderBoardArray = await axios.get(
-      "http://localhost:3000/premium/showLeaderBoard",
-      { headers: { Authorization: token } }
-    );
-    console.log(userLeaderBoardArray.data);
+      const LeaderboardBtn = document.getElementById("leaderboard");
+      LeaderboardBtn.innerHTML += "<h1>Leader Board </h1>";
 
-    const LeaderboardBtn = document.getElementById("leaderboard");
-    LeaderboardBtn.innerHTML += "<h1>Leader Board </h1>";
+      userLeaderBoardArray.data.forEach((userDetail) => {
+        LeaderboardBtn.innerHTML += `<li>Name - ${userDetail.name} - Total Expense ${userDetail.total_cost}`;
+      });
+    };
 
-    userLeaderBoardArray.data.forEach((userDetail) => {
-      LeaderboardBtn.innerHTML += `<li>Name - ${userDetail.name} - Total Expense ${userDetail.total_cost}`;
-    });
-  };
-
-  document.getElementById("message").appendChild(showLeaderBoard);
+    document.getElementById("message").appendChild(showLeaderBoard);
+  } catch (error) {
+    console.log(error);
+  }
 }
