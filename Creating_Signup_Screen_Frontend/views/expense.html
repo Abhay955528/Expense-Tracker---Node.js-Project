@@ -9,10 +9,10 @@
       #h1 {
         text-align: center;
       }
-      #user{
-        list-style: none
+      #user {
+        list-style: none;
       }
-      #leaderboard{
+      #leaderboard {
         display: contents;
       }
     </style>
@@ -40,13 +40,15 @@
         <input type="submit" class="btn" value="Submit" />
       </form>
       <span id="message"></span>
-    <h1 id="expense"></h1>
-    <ul id="user"></ul>
+      <h1 id="expense"></h1>
+      <ul id="user"></ul>
       <button id="rzp-button">Buy Premium</button>
       <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
     </div>
 
     <ul id="leaderboard"></ul>
+    <button onclick="download()" id="downloadexpense"></button>
+
     <script src="../public/js/expense.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js"></script>
   </body>

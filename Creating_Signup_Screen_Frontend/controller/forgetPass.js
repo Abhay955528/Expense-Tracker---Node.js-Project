@@ -51,6 +51,7 @@ const forgetpassword = async (req, res) => {
 const resetpassword = async (req, res) => {
   try {
     const forgetpasswordId = req.params.id;
+    console.log(forgetpasswordId);
     const forgetpassword = await ForgetPassword.findByPk(forgetpasswordId);
     if (forgetpassword) {
       await forgetpassword.update({ isActive: false });
@@ -83,16 +84,13 @@ const updatepassword = async (req, res) => {
     const newpassword = req.query.newpassword;
     const details = await ForgetPassword.findByPk(id);
     const user = await User.findByPk(details.userId);
-    console.log('86',user);
     if (user) {
       const soltRoute = 10;
       bcrypt.hash(newpassword, soltRoute, async (error, hash) => {
         if(error) {
-          console.log();
+          console.log(error);
         }
-        console.log('hash',hash);
-        const passwordUpdate = await user.update({password:{hash}});
-        console.log('94',passwordUpdate);
+        const passwordUpdate = await user.update({password:hash});
         res.status(201).json({massge:'password updated successfully'});
       });
     } else {

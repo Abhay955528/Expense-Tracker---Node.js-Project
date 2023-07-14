@@ -128,10 +128,27 @@ async function onPageLoading(e) {
   }
 }
 
+async function download(){
+  let token = localStorage.getItem('token');
+  try{
+    const response=await axios.get('http://localhost:3000/user/download', { headers: {"Authorization" : token} })
+
+    var a = document.createElement("a");
+    a.href = response.data.fileUrl;
+    a.download = 'myexpense.csv';
+    a.click();
+  }
+  catch(err){
+    console.log(err);
+  }
+
+}
+
 function preminumUserShowMessage() {
   document.getElementById("rzp-button").style.visibility = "hidden";
   document.getElementById("message").innerHTML = "You are a premium user :";
   document.getElementById("expense").innerHTML = "Expense";
+  document.getElementById("downloadexpense").innerHTML = "Download File"
 }
 
 function parseJwt(token) {
