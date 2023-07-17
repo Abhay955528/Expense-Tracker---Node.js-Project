@@ -1,9 +1,33 @@
 const Expense = require("../model/expense");
 const User = require("../model/user");
-const sequelize = require("../util/database");
+const Sequelize = require("../util/database");
+const UserService = require("../service/userservice");
+const S3Service = require("../service/s3service");
+const DownloadUrl = require("../model/downloadurl");
+
+const expenseDowanload = async (req, res) => {
+  try {
+    const expense = await Expense.findAll({ where: { userId: req.user.id } });
+    const expenseStrngify = JSON.stringify(expense);
+
+    // It should dependfd upon the user id
+    const userId = req.user.id;
+
+    const fileName = `Expense${userId}${new Date()}.txt`;
+    const fileURL = await S3Service.uploadTOS3(expenseStrngify, fileName);
+    console.log(fileURL);
+    const data = await DownloadUrl.create({
+      downloadUrl:fileURL,
+    });
+    res.status(200).json({ fileURL, success: true });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ fileURL: "", success: false, err: error });
+  }
+};
 
 const addExpense = async (req, res) => {
-  const t = await sequelize.transaction();
+  const t = await Sequelize.transaction();
   try {
     const { money, description, category } = req.body;
 
@@ -46,7 +70,7 @@ const getExpense = async (req, res) => {
 };
 
 const deleteExpense = async (req, res) => {
-  const t = await sequelize.transaction();
+  const t = await Sequelize.transaction();
   try {
     const uId = req.params.id;
     const expense = await Expense.findByPk(uId);
@@ -69,4 +93,5 @@ module.exports = {
   addExpense,
   getExpense,
   deleteExpense,
+  expenseDowanload,
 };

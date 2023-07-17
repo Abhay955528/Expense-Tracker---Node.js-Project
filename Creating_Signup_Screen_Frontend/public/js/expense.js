@@ -39,64 +39,64 @@ async function AddNewSpend(e) {
 function showUsersOnScreen(myObj) {
   try {
     const parent = document.getElementById("user");
-  const child = document.createElement("li");
+    const child = document.createElement("li");
 
-  child.appendChild(
-    document.createTextNode(
-      `${myObj.amount} -  ${myObj.description} - ${myObj.category}`
-    )
-  );
+    child.appendChild(
+      document.createTextNode(
+        `${myObj.amount} -  ${myObj.description} - ${myObj.category}`
+      )
+    );
 
-  // create delete button
-  let deletebtn = document.createElement("input");
-  deletebtn.value = "Delete Expense";
-  deletebtn.id = "btn";
-  deletebtn.type = "button";
+    // create delete button
+    let deletebtn = document.createElement("input");
+    deletebtn.value = "Delete Expense";
+    deletebtn.id = "btn";
+    deletebtn.type = "button";
 
-  deletebtn.onclick = (e) => {
-    // if (confirm("Are You Sure ..?")) {
-    console.log(myObj.id);
-    var li = e.target.parentElement;
-    axios
-      .delete(`http://localhost:3000/expense/delete-expense/${myObj.id}`)
-      .then((response) => {
-        console.log(response.data);
-        parent.removeChild(child);
-      })
-      .catch((error) => {
-        document.body.innerHTML =
-          document.body.innerHTML + "<h4>Something went wrong</h4>";
-        console.log(error);
-      });
-    // }
-  };
-  child.appendChild(deletebtn);
+    deletebtn.onclick = (e) => {
+      // if (confirm("Are You Sure ..?")) {
+      console.log(myObj.id);
+      var li = e.target.parentElement;
+      axios
+        .delete(`http://localhost:3000/expense/delete-expense/${myObj.id}`)
+        .then((response) => {
+          console.log(response.data);
+          parent.removeChild(child);
+        })
+        .catch((error) => {
+          document.body.innerHTML =
+            document.body.innerHTML + "<h4>Something went wrong</h4>";
+          console.log(error);
+        });
+      // }
+    };
+    child.appendChild(deletebtn);
 
-  // create edit button
-  // let editBtn = document.createElement("input");
-  // editBtn.value = "Edit Expense";
-  // editBtn.id = "btn";
-  // editBtn.type = "button";
+    // create edit button
+    // let editBtn = document.createElement("input");
+    // editBtn.value = "Edit Expense";
+    // editBtn.id = "btn";
+    // editBtn.type = "button";
 
-  // editBtn.onclick = (e) => {
-  //   axios
-  //     .delete(`http://localhost:3000/expense/delete-expense/${myObj.id}`)
-  //     .then((response) => {
-  //       spendMoney.value = myObj.amount;
-  //       spendOn.value = myObj.description;
-  //       spendWhat.value = myObj.category;
-  //     })
-  //     .catch((error) => {
-  //       document.body.innerHTML =
-  //         document.body.innerHTML + "<h4>Something went wrong</h4>";
-  //       console.log(error);
-  //     });
+    // editBtn.onclick = (e) => {
+    //   axios
+    //     .delete(`http://localhost:3000/expense/delete-expense/${myObj.id}`)
+    //     .then((response) => {
+    //       spendMoney.value = myObj.amount;
+    //       spendOn.value = myObj.description;
+    //       spendWhat.value = myObj.category;
+    //     })
+    //     .catch((error) => {
+    //       document.body.innerHTML =
+    //         document.body.innerHTML + "<h4>Something went wrong</h4>";
+    //       console.log(error);
+    //     });
 
-  //   parent.removeChild(child);
-  // };
-  // child.appendChild(editBtn);
+    //   parent.removeChild(child);
+    // };
+    // child.appendChild(editBtn);
 
-  parent.appendChild(child);
+    parent.appendChild(child);
   } catch (error) {
     console.log(error);
   }
@@ -128,27 +128,28 @@ async function onPageLoading(e) {
   }
 }
 
-async function download(){
-  let token = localStorage.getItem('token');
-  try{
-    const response=await axios.get('http://localhost:3000/user/download', { headers: {"Authorization" : token} })
-
-    var a = document.createElement("a");
-    a.href = response.data.fileUrl;
-    a.download = 'myexpense.csv';
-    a.click();
+async function download() {
+  let token = localStorage.getItem("token");
+  try {
+    const response = await axios.get("http://localhost:3000/expense/download", {
+      headers: { Authorization: token },
+    });
+    if (response.status === 200) {
+      var a = document.createElement("a");
+      a.href = response.data.fileURL;
+      a.download = "myexpense.csv";
+      a.click();
+    }
+  } catch (error) {
+    throw new Error(error);
   }
-  catch(err){
-    console.log(err);
-  }
-
 }
 
 function preminumUserShowMessage() {
   document.getElementById("rzp-button").style.visibility = "hidden";
   document.getElementById("message").innerHTML = "You are a premium user :";
   document.getElementById("expense").innerHTML = "Expense";
-  document.getElementById("downloadexpense").innerHTML = "Download File"
+  document.getElementById("downloadexpense").innerHTML = "Download File";
 }
 
 function parseJwt(token) {
