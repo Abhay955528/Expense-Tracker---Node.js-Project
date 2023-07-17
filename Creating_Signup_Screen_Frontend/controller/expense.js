@@ -7,6 +7,7 @@ const DownloadUrl = require("../model/downloadurl");
 
 const expenseDowanload = async (req, res) => {
   try {
+    const t = await Sequelize.transaction();
     const expense = await Expense.findAll({ where: { userId: req.user.id } });
     const expenseStrngify = JSON.stringify(expense);
 
@@ -16,11 +17,13 @@ const expenseDowanload = async (req, res) => {
     const fileName = `Expense${userId}${new Date()}.txt`;
     const fileURL = await S3Service.uploadTOS3(expenseStrngify, fileName);
     console.log(fileURL);
-    const data = await DownloadUrl.create({
-      downloadUrl:fileURL,
-    });
+    // const data = await DownloadUrl.create({
+    //   downloadUrl:fileURL,
+    // });
     res.status(200).json({ fileURL, success: true });
+    await t.commit();
   } catch (error) {
+    await t.rollback();
     console.log(error);
     res.status(500).json({ fileURL: "", success: false, err: error });
   }
@@ -89,9 +92,39 @@ const deleteExpense = async (req, res) => {
   }
 };
 
+const lodaData = async (req, res) => {
+  try {
+    const t = await Sequelize.transaction();
+    let page = req.params.page || 1;
+    const pageSize = +req.query.pagesize || 5;
+    let totalexpense = await Expense.count();
+    let expenses = await Expense.findAll(
+      { where: { userId: req.user.id } },
+      {
+        offset: (page - 1) * expensePerPage,
+        limit: expensePerPage,
+      }
+    );
+    res.status(201).json({
+      expenses: expenses,
+      currentPage: page,
+      hasNextPage: page * expensePerPage < totalexpense,
+      nextPage: page + 1,
+      hasPreviousPage: page > 1,
+      previousPage: page - 1,
+      lastPage: Math.ceil(totalexpense / expensePerPage),
+    });
+    await t.commit();
+  } catch (err) {
+    await t.rollback();
+    console.log(err);
+  }
+};
+
 module.exports = {
   addExpense,
   getExpense,
   deleteExpense,
   expenseDowanload,
+  lodaData,
 };

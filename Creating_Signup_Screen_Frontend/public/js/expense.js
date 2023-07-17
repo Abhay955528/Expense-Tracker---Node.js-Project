@@ -145,11 +145,74 @@ async function download() {
   }
 }
 
+function showPagination({
+  currentPage,
+  hasNextPage,
+  nextPage,
+  hasPreviousPage,
+  previousPage,
+}) {
+  const pagination = document.getElementById("pagination");
+
+  if (hasPreviousPage) {
+    const prevBtn = document.createElement("button");
+    prevBtn.innerHTML = previousPage;
+    prevBtn.addEventListener("click", () => {
+      getProducts(previousPage);
+    });
+    pagination.appendChild(prevBtn);
+  }
+
+  const crtBtn = document.createElement("button");
+  crtBtn.innerHTML = currentPage;
+  crtBtn.addEventListener("click", () => {
+    getProducts(currentPage);
+  });
+  pagination.appendChild(crtBtn);
+  if (hasNextPage) {
+    const nextBtn = document.createElement("button");
+    nextBtn.innerHTML = nextPage;
+    nextBtn.addEventListener("click", () => {
+      getProducts(nextPage);
+    });
+    pagination.appendChild(nextBtn);
+  }
+}
+
+async function getProducts(page) {
+  const token = localStorage.getItem('token');
+  const pageSize = localStorage.getItem("pagesize");
+  let response = await axios.get(
+    `http://localhost:3000/expense/load-data?page=${page}&pagesize=${pageSize}`,
+    { headers: { Authorization: token } }
+  );
+  //console.log(response);
+  console.log(response.data.expenses);
+  const ul=document.getElementById('details');
+  console.log(ul);
+  const listItems = document.querySelectorAll('#details li');
+
+// 👇️ NodeList(5) [li, li, li, li, li]
+console.log(listItems);
+
+listItems.forEach(listItem => {
+  listItem.parentNode.removeChild(listItem);
+});
+
+  console.log(ul);
+  const pagination=document.getElementById('pagination');
+  pagination.innerHTML='';
+  for (let i = 0; i < response.data.expenses.length; i++) {
+    showUsersOnScreen(response.data.expenses[i]);
+  }
+}
+
 function preminumUserShowMessage() {
   document.getElementById("rzp-button").style.visibility = "hidden";
   document.getElementById("message").innerHTML = "You are a premium user :";
   document.getElementById("expense").innerHTML = "Expense";
-  document.getElementById("downloadexpense").innerHTML = "Download File";
+  document.getElementById("downloadexpense").innerHTML =
+    "<button>Download File</button>";
 }
 
 function parseJwt(token) {
