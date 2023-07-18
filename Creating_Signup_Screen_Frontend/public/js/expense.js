@@ -152,8 +152,17 @@ function showPagination({
   hasPreviousPage,
   previousPage,
 }) {
-  const pagination = document.getElementById("pagination");
+  const dynamicpagination = document.getElementById("dynamicpagination");
+  if (dynamicpagination) {
+    dynamicpagination.addEventListener("change", () => {
+      const pageSize = document.getElementById("dynamicpagination").value;
+      // console.log(pageSize);
+      localStorage.setItem("pagesize", pageSize);
+      getProducts(currentPage);
+    });
+  }
 
+  const pagination = document.getElementById("pagination");
   if (hasPreviousPage) {
     const prevBtn = document.createElement("button");
     prevBtn.innerHTML = previousPage;
@@ -180,28 +189,27 @@ function showPagination({
 }
 
 async function getProducts(page) {
-  const token = localStorage.getItem('token');
-  const pageSize = localStorage.getItem("pagesize");
+  const token = localStorage.getItem("token");
   let response = await axios.get(
-    `http://localhost:3000/expense/load-data?page=${page}&pagesize=${pageSize}`,
+    `http://localhost:3000/expense/load-data?page=${page}`,
     { headers: { Authorization: token } }
   );
   //console.log(response);
   console.log(response.data.expenses);
-  const ul=document.getElementById('details');
+  const ul = document.getElementById("details");
   console.log(ul);
-  const listItems = document.querySelectorAll('#details li');
+  const listItems = document.querySelectorAll("#details li");
 
-// 👇️ NodeList(5) [li, li, li, li, li]
-console.log(listItems);
+  // 👇️ NodeList(5) [li, li, li, li, li]
+  console.log(listItems);
 
-listItems.forEach(listItem => {
-  listItem.parentNode.removeChild(listItem);
-});
+  listItems.forEach((listItem) => {
+    listItem.parentNode.removeChild(listItem);
+  });
 
   console.log(ul);
-  const pagination=document.getElementById('pagination');
-  pagination.innerHTML='';
+  const pagination = document.getElementById("pagination");
+  pagination.innerHTML = "";
   for (let i = 0; i < response.data.expenses.length; i++) {
     showUsersOnScreen(response.data.expenses[i]);
   }

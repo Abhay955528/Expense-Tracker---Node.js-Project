@@ -7,7 +7,6 @@ const DownloadUrl = require("../model/downloadurl");
 
 const expenseDowanload = async (req, res) => {
   try {
-    const t = await Sequelize.transaction();
     const expense = await Expense.findAll({ where: { userId: req.user.id } });
     const expenseStrngify = JSON.stringify(expense);
 
@@ -21,9 +20,7 @@ const expenseDowanload = async (req, res) => {
     //   downloadUrl:fileURL,
     // });
     res.status(200).json({ fileURL, success: true });
-    await t.commit();
   } catch (error) {
-    await t.rollback();
     console.log(error);
     res.status(500).json({ fileURL: "", success: false, err: error });
   }
@@ -43,7 +40,7 @@ const addExpense = async (req, res) => {
       description: description,
       category: category,
       userId: req.user.id,
-    });
+      });
 
     const user = await User.findOne({
       where: { id: req.user.id },
@@ -94,29 +91,27 @@ const deleteExpense = async (req, res) => {
 
 const lodaData = async (req, res) => {
   try {
-    const t = await Sequelize.transaction();
-    let page = req.params.page || 1;
-    const pageSize = +req.query.pagesize || 5;
+    const page = +req.query.page || 1;
+    const pageSize = +req.query.page || 5;
     let totalexpense = await Expense.count();
+    console.log(totalexpense);
     let expenses = await Expense.findAll(
       { where: { userId: req.user.id } },
       {
-        offset: (page - 1) * expensePerPage,
-        limit: expensePerPage,
+        offset: (page - 1) * pageSize,
+        limit: pageSize,
       }
     );
     res.status(201).json({
       expenses: expenses,
       currentPage: page,
-      hasNextPage: page * expensePerPage < totalexpense,
+      hasNextPage: page * pageSize < totalexpense,
       nextPage: page + 1,
       hasPreviousPage: page > 1,
       previousPage: page - 1,
-      lastPage: Math.ceil(totalexpense / expensePerPage),
+      lastPage: Math.ceil(totalexpense / pageSize),
     });
-    await t.commit();
   } catch (err) {
-    await t.rollback();
     console.log(err);
   }
 };
