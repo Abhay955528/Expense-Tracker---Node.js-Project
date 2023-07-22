@@ -40,7 +40,7 @@ const addExpense = async (req, res) => {
       description: description,
       category: category,
       userId: req.user.id,
-      });
+    });
 
     const user = await User.findOne({
       where: { id: req.user.id },
@@ -91,6 +91,14 @@ const deleteExpense = async (req, res) => {
 
 const lodaData = async (req, res) => {
   try {
+    // console.log(req.query);
+    // const expense = await Expense.findAll();
+    // const page = Number(req.query.page) || 1;
+    // const limit = Number(req.query.limit) || 3;
+    // const skip = (page - 1) * limit;
+    // console.log(skip);
+
+
     const page = +req.query.page || 1;
     const pageSize = +req.query.page || 5;
     let totalexpense = await Expense.count();
@@ -102,7 +110,7 @@ const lodaData = async (req, res) => {
         limit: pageSize,
       }
     );
-    res.status(201).json({
+    res.status(201).json({ 
       expenses: expenses,
       currentPage: page,
       hasNextPage: page * pageSize < totalexpense,

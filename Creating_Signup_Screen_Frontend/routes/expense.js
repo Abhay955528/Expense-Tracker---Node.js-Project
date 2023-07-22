@@ -21,6 +21,6 @@ router.get(
 );
 router.delete("/delete-expense/:id", expenseControllers.deleteExpense);
 
-router.get("/load-data", userrauthentication.authenticate, expenseControllers.lodaData);
+router.get("/load-data", expenseControllers.lodaData);
 
 module.exports = router;

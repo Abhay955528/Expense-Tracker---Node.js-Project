@@ -102,9 +102,7 @@ function showUsersOnScreen(myObj) {
   }
 }
 
-window.addEventListener("DOMContentLoaded", onPageLoading);
-
-async function onPageLoading(e) {
+window.addEventListener("DOMContentLoaded", async () => {
   try {
     const token = localStorage.getItem("token");
     const decodedToken = parseJwt(token);
@@ -126,7 +124,7 @@ async function onPageLoading(e) {
   } catch (error) {
     console.log(error);
   }
-}
+});
 
 async function download() {
   let token = localStorage.getItem("token");
@@ -156,7 +154,7 @@ function showPagination({
   if (dynamicpagination) {
     dynamicpagination.addEventListener("change", () => {
       const pageSize = document.getElementById("dynamicpagination").value;
-      // console.log(pageSize);
+      console.log(pageSize);
       localStorage.setItem("pagesize", pageSize);
       getProducts(currentPage);
     });
@@ -190,8 +188,9 @@ function showPagination({
 
 async function getProducts(page) {
   const token = localStorage.getItem("token");
+  const pageSize = localStorage.getItem("pagesize");
   let response = await axios.get(
-    `http://localhost:3000/expense/load-data?page=${page}`,
+    `http://localhost:3000/expense/load-data?page=${page}&pagesize=${pageSize}`,
     { headers: { Authorization: token } }
   );
   //console.log(response);
